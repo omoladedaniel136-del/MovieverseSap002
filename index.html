@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MovieVerse — Cinema Redefined</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">▶</span>
+      <span class="brand-text">MovieVerse</span>
+    </div>
+    <div class="nav-links">
+      <a href="#" class="nav-link active" onclick="showSection('home')">Home</a>
+      <a href="#" class="nav-link" onclick="showSection('add')">+ Add Movie</a>
+    </div>
+    <div class="nav-search">
+      <input type="text" id="searchInput" placeholder="Search movies…" oninput="handleSearch(this.value)" />
+      <span class="search-icon">🔍</span>
+    </div>
+  </nav>
+
+  <!-- HERO SLIDER -->
+  <section class="hero" id="heroSection">
+    <div class="hero-slider" id="heroSlider"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content" id="heroContent">
+      <div class="hero-badge">Featured</div>
+      <h1 class="hero-title" id="heroTitle">Loading…</h1>
+      <p class="hero-desc" id="heroDesc"></p>
+      <div class="hero-meta" id="heroMeta"></div>
+      <div class="hero-actions">
+        <button class="btn-primary" id="heroWatchBtn" onclick="openHeroMovie()">▶ Watch Trailer</button>
+        <button class="btn-secondary" id="heroInfoBtn" onclick="openHeroInfo()">ℹ More Info</button>
+      </div>
+    </div>
+    <div class="hero-dots" id="heroDots"></div>
+    <button class="hero-arrow hero-prev" onclick="prevSlide()">❮</button>
+    <button class="hero-arrow hero-next" onclick="nextSlide()">❯</button>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main id="mainContent">
+
+    <!-- HOME SECTION -->
+    <section id="homeSection">
+      <div class="section-header">
+        <h2 class="section-title">🔥 Popular Right Now</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="movie-grid" id="movieGrid">
+        <div class="skeleton-grid" id="skeletonGrid">
+          <div class="skeleton-card" style="--i:1"></div>
+          <div class="skeleton-card" style="--i:2"></div>
+          <div class="skeleton-card" style="--i:3"></div>
+          <div class="skeleton-card" style="--i:4"></div>
+          <div class="skeleton-card" style="--i:5"></div>
+          <div class="skeleton-card" style="--i:6"></div>
+          <div class="skeleton-card" style="--i:7"></div>
+          <div class="skeleton-card" style="--i:8"></div>
+        </div>
+      </div>
+      <div class="section-header" style="margin-top:3rem">
+        <h2 class="section-title">📁 My Movies</h2>
+        <span class="section-line"></span>
+      </div>
+      <div class="movie-grid" id="customGrid"></div>
+    </section>
+
+    <!-- ADD MOVIE SECTION -->
+    <section id="addSection" class="hidden">
+      <div class="add-movie-wrapper">
+        <div class="add-movie-card">
+          <h2 class="add-title">Add a Movie</h2>
+          <p class="add-subtitle">Curate your personal collection</p>
+          <div class="form-group">
+            <label>Movie Title *</label>
+            <input type="text" id="addTitle" placeholder="e.g. Inception" />
+          </div>
+          <div class="form-group">
+            <label>Poster Image URL *</label>
+            <input type="url" id="addImage" placeholder="https://…/poster.jpg" />
+          </div>
+          <div class="form-group">
+            <label>Your Rating (1–10)</label>
+            <input type="number" id="addRating" min="1" max="10" placeholder="8.5" />
+          </div>
+          <div class="form-group">
+            <label>Your Review *</label>
+            <textarea id="addReview" rows="4" placeholder="Write your thoughts about this movie…"></textarea>
+          </div>
+          <button class="btn-primary full-width" onclick="addCustomMovie()">＋ Add to Collection</button>
+          <div id="addFeedback" class="add-feedback"></div>
+        </div>
+        <div class="add-preview" id="addPreview">
+          <p class="preview-placeholder">Preview will appear here</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MOVIE MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+    <div class="modal" id="movieModal">
+      <button class="modal-close" onclick="closeModalBtn()">✕</button>
+      <div class="modal-hero" id="modalHero"></div>
+      <div class="modal-body">
+        <div class="modal-left">
+          <img id="modalPoster" src="" alt="" class="modal-poster" />
+        </div>
+        <div class="modal-right">
+          <div class="modal-badge" id="modalBadge"></div>
+          <h2 class="modal-title" id="modalTitle"></h2>
+          <div class="modal-meta" id="modalMeta"></div>
+          <p class="modal-desc" id="modalDesc"></p>
+          <div class="modal-actions">
+            <button class="btn-primary" id="trailerBtn" onclick="watchTrailer()">▶ Watch Trailer</button>
+            <button class="btn-secondary" onclick="closeModalBtn()">← Back</button>
+          </div>
+
+          <!-- REVIEW SECTION -->
+          <div class="review-section">
+            <h3 class="review-heading">Reviews</h3>
+            <div class="review-list" id="reviewList"></div>
+            <div class="review-form">
+              <input type="text" id="reviewAuthor" placeholder="Your name" />
+              <div class="star-rating" id="starRating">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+              </div>
+              <textarea id="reviewText" rows="3" placeholder="Share your thoughts on this movie…"></textarea>
+              <button class="btn-secondary" id="postReviewBtn">Post Review</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-brand">
+      <span class="brand-icon">▶</span>
+      <span class="brand-text">MovieVerse</span>
+    </div>
+    <p class="footer-note">Powered by TMDB API &nbsp;·&nbsp; Built for cinema lovers</p>
+  </footer>
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
